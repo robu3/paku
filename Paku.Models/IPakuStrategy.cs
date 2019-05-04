@@ -11,6 +11,13 @@ namespace Paku.Models
     /// </summary>
     public interface IPakuStrategy
     {
-        IList<VirtualFileInfo> Eat(IList<VirtualFileInfo> files);
+        /// <summary>
+        /// ## Eat
+        /// 
+        /// Eat the specified files by deleting, compressing, etc.
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns>Any files generated and/or remaining after consumption.</returns>
+        PakuResult Eat(IList<VirtualFileInfo> files);
     }
 }

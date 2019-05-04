@@ -20,6 +20,17 @@ namespace Paku.Models
         public DateTime LastWriteTime { get; set; }
 
         /// <summary>
+        /// ## ToFileInfo
+        /// 
+        /// Return a `FileInfo` instance using the current `FullName`.
+        /// </summary>
+        /// <returns></returns>
+        public FileInfo ToFileInfo()
+        {
+            return new FileInfo(FullName);
+        }
+
+        /// <summary>
         /// ## UpdateFullName
         /// 
         /// Update to the specified full file name, e.g., C:\foo\bar.txt; additionally, parse and
