@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Paku.Models
@@ -9,6 +10,8 @@ namespace Paku.Models
     /// 
     /// A file age-based filter (created or last modified).
     /// </summary>
+    [CommandAlias("age")]
+    [Description("Filters files based on age. Available fields to check are mdate & cdate. Ex: mdate<=8h for any files modified in the last 8 hours.")]
     public class AgeFilterStrategy : IFilterStrategy
     {
         public IList<VirtualFileInfo> Filter(IList<VirtualFileInfo> files, string parameters)

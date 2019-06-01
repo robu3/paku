@@ -1,34 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Paku.Models
 {
+    /// <summary>
+    /// # RegexSelectionStrategy
+    /// 
+    /// Selects files using a regular expression.
+    /// </summary>
+    [CommandAlias("regex")]
+    [Description("Uses a regular expression to select files.")]
     public class RegexSelectionStrategy : ISelectionStrategy
     {
         /// <summary>
-        /// ## SelectionRegex
-        /// 
-        /// The regular expression used to select files.
-        /// </summary>
-        public Regex SelectionRegex { get; set; }
-
-        /// <summary>
         /// ## Select
         /// 
-        /// Selects files that `SelectionRegex` is able to match.
+        /// Selects files that the specified regular expression is able to match.
         /// </summary>
         /// <param name="dir"></param>
         /// <returns></returns>
-        public IList<VirtualFileInfo> Select(DirectoryInfo dir)
+        public IList<VirtualFileInfo> Select(DirectoryInfo dir, string regexString)
         {
             List<VirtualFileInfo> results = new List<VirtualFileInfo>();
+            Regex selectionRegex = new Regex(regexString);
 
             foreach (FileInfo fi in dir.EnumerateFiles())
             {
-                if (SelectionRegex.IsMatch(fi.Name))
+                if (selectionRegex.IsMatch(fi.Name))
                 {
                     results.Add(new VirtualFileInfo(fi));
                 }
@@ -37,9 +39,8 @@ namespace Paku.Models
             return results;
         }
 
-        public RegexSelectionStrategy(string regex)
+        public RegexSelectionStrategy()
         {
-            this.SelectionRegex = new Regex(regex);
         }
     }
 }

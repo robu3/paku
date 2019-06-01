@@ -14,10 +14,10 @@ namespace Paku.Tests
         [TestMethod]
         public void RegexSelectionStrategyTest()
         {
-            ISelectionStrategy selector = new RegexSelectionStrategy(@"\.txt$");
+            ISelectionStrategy selector = new RegexSelectionStrategy();
             DirectoryInfo di = new DirectoryInfo(@"Props");
 
-            IList<VirtualFileInfo> selected = selector.Select(di);
+            IList<VirtualFileInfo> selected = selector.Select(di, @"\.txt$");
             Assert.AreEqual(2, selected.Count);
             Assert.AreEqual(selected.Count, selected.Count(x => x.Name.EndsWith(".txt")));
         }
@@ -25,10 +25,10 @@ namespace Paku.Tests
         [TestMethod]
         public void PatternSelectionStrategyTest()
         {
-            ISelectionStrategy selector = new PatternSelectionStrategy("*.txt");
+            ISelectionStrategy selector = new PatternSelectionStrategy();
             DirectoryInfo di = new DirectoryInfo(@"Props");
 
-            IList<VirtualFileInfo> selected = selector.Select(di);
+            IList<VirtualFileInfo> selected = selector.Select(di, "*.txt");
             Assert.AreEqual(2, selected.Count);
             Assert.AreEqual(selected.Count, selected.Count(x => x.Name.EndsWith(".txt")));
         }

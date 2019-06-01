@@ -12,6 +12,6 @@ namespace Paku.Models
     /// </summary>
     public interface ISelectionStrategy
     {
-        IList<VirtualFileInfo> Select(DirectoryInfo dir);
+        IList<VirtualFileInfo> Select(DirectoryInfo dir, string parameters);
     }
 }

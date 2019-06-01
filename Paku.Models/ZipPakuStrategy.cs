@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -11,6 +12,8 @@ namespace Paku.Models
     /// 
     /// Eats files by adding them to a zip archive and then deleting them.
     /// </summary>
+    [CommandAlias("zip")]
+    [Description("Zips up the file(s) and then deletes them.")]
     public class ZipPakuStrategy : IPakuStrategy
     {
         public string ZipFilePrefix { get; set; }
@@ -22,7 +25,7 @@ namespace Paku.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public PakuResult Eat(IList<VirtualFileInfo> files)
+        public PakuResult Eat(IList<VirtualFileInfo> files, string parameters)
         {
             // attempt to delete the files, tracking which ones we could delete
             PakuResult result = new PakuResult();

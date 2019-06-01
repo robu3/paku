@@ -46,7 +46,7 @@ namespace Paku.Tests
             List<VirtualFileInfo> virtualFiles = files.Select(x => new VirtualFileInfo(x)).ToList();
 
             IPakuStrategy strategy = new DeletePakuStrategy();
-            PakuResult result = strategy.Eat(virtualFiles);
+            PakuResult result = strategy.Eat(virtualFiles, null);
 
             // all of the files should have been deleted successfully
             Assert.IsTrue(result.Success);
@@ -76,7 +76,7 @@ namespace Paku.Tests
             virtualFiles.Insert(1, new VirtualFileInfo(@"C:\DeletePakuStrategyTestError.notreal"));
 
             IPakuStrategy strategy = new DeletePakuStrategy();
-            PakuResult result = strategy.Eat(virtualFiles);
+            PakuResult result = strategy.Eat(virtualFiles, null);
             // the operation should be marked as a failure
             // the first file should have been deleted
             Assert.IsFalse(result.Success);
@@ -100,7 +100,7 @@ namespace Paku.Tests
             List<VirtualFileInfo> virtualFiles = files.Select(x => new VirtualFileInfo(x)).ToList();
 
             IPakuStrategy strategy = new ZipPakuStrategy();
-            PakuResult result = strategy.Eat(virtualFiles);
+            PakuResult result = strategy.Eat(virtualFiles, null);
 
             // all of the files should have been deleted successfully
             Assert.IsTrue(result.Success);
@@ -140,7 +140,7 @@ namespace Paku.Tests
             virtualFiles.Insert(1, new VirtualFileInfo(@"C:\ZipPakuStrategyTestError.notreal"));
 
             IPakuStrategy strategy = new ZipPakuStrategy();
-            PakuResult result = strategy.Eat(virtualFiles);
+            PakuResult result = strategy.Eat(virtualFiles, null);
 
             // result should be marked as failure; only one file should be deleted
             Assert.IsFalse(result.Success);

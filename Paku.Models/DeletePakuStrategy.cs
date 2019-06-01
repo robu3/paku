@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 
@@ -10,6 +11,8 @@ namespace Paku.Models
     /// 
     /// Eats files by deleting them. Yum!
     /// </summary>
+    [CommandAlias("delete")]
+    [Description("Deletes the file(s).")]
     public class DeletePakuStrategy : IPakuStrategy
     {
         /// <summary>
@@ -19,7 +22,7 @@ namespace Paku.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public PakuResult Eat(IList<VirtualFileInfo> files)
+        public PakuResult Eat(IList<VirtualFileInfo> files, string parameters)
         {
             // attempt to delete the files, tracking which ones we could delete
             PakuResult result = new PakuResult();
