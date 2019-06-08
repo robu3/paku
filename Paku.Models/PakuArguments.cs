@@ -15,6 +15,13 @@ namespace Paku.Models
     public class PakuArguments
     {
         /// <summary>
+        /// ## Directory
+        /// 
+        /// The directory to clean.
+        /// </summary>
+        public string Directory { get; set; }
+
+        /// <summary>
         /// ## SelectionStrategy
         /// 
         /// The selection strategy and arguments provided through the --select option.
@@ -83,6 +90,13 @@ namespace Paku.Models
                 }
             });
 
+            // allow the user to specify a directory
+            options.Add("d|dir=", "Specify the directory to clean; if not specified, defaults to the current.", (string opt) =>
+            {
+                Directory = opt;
+            });
+
+            // add a help option
             options.Add("h|help|?", "Show this help menu.", (string opt) =>
             {
                 options.WriteOptionDescriptions(Console.Out);

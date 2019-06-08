@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Paku.Models
@@ -18,6 +19,6 @@ namespace Paku.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns>Result indicating success/failure, files removed, and files created.</returns>
-        PakuResult Eat(IList<VirtualFileInfo> files, string parameters);
+        PakuResult Eat(DirectoryInfo dir, IList<VirtualFileInfo> files, string parameters);
     }
 }

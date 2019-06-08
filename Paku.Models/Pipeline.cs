@@ -52,7 +52,7 @@ namespace Paku.Models
             IList<VirtualFileInfo> files = SelectionStrategy.Select(di, selectParams);
             files = FilterStrategy.Filter(files, filterParams);
 
-            return PakuStrategy.Eat(files, null);
+            return PakuStrategy.Eat(di, files, null);
         }
 
         /// <summary>

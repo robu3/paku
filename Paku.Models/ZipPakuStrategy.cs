@@ -25,11 +25,11 @@ namespace Paku.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public PakuResult Eat(IList<VirtualFileInfo> files, string parameters)
+        public PakuResult Eat(DirectoryInfo dir, IList<VirtualFileInfo> files, string parameters)
         {
             // attempt to delete the files, tracking which ones we could delete
             PakuResult result = new PakuResult();
-            string zipName = $"{ZipFilePrefix}_{DateTime.Now.ToString("yyyyMMdd_HH-mm-ss-fff")}.zip";
+            string zipName = Path.Combine(dir.FullName, $"{ZipFilePrefix}_{DateTime.Now.ToString("yyyyMMdd_HH-mm-ss-fff")}.zip");
 
             using (var stream = new FileStream(zipName, FileMode.Create))
             {
@@ -74,9 +74,14 @@ namespace Paku.Models
             return result;
         }
 
-        public ZipPakuStrategy(string zipPrefix = "paku")
+        public ZipPakuStrategy(string zipPrefix)
         {
             this.ZipFilePrefix = zipPrefix;
+        }
+
+        public ZipPakuStrategy()
+        {
+            this.ZipFilePrefix = "paku";
         }
     }
 }

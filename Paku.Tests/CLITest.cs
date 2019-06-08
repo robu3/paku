@@ -18,14 +18,15 @@ namespace Paku.Tests
 
             Assert.IsNotNull(options);
 
-            // 3 main options plus a help menu
-            Assert.AreEqual(4, options.Count);
+            // 4 main options plus a help menu
+            Assert.AreEqual(5, options.Count);
 
             // attempt to parse arguments and ensure that options were set correctly
             args = new PakuArguments();
-            bool success = args.Parse(new string[] { "--select:regex=foo", "--filter:age=cdate>30m", "--paku:delete" });
+            bool success = args.Parse(new string[] { @"--dir=C:\foo", "--select:regex=foo", "--filter:age=cdate>30m", "--paku:delete" });
 
             Assert.IsTrue(success);
+            Assert.IsNotNull(args.Directory);
             Assert.IsNotNull(args.SelectionStrategy);
             Assert.IsNotNull(args.FilterStrategy);
             Assert.IsNotNull(args.PakuStrategy);

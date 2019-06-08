@@ -22,7 +22,7 @@ namespace Paku.Models
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        public PakuResult Eat(IList<VirtualFileInfo> files, string parameters)
+        public PakuResult Eat(DirectoryInfo dir, IList<VirtualFileInfo> files, string parameters)
         {
             // attempt to delete the files, tracking which ones we could delete
             PakuResult result = new PakuResult();
