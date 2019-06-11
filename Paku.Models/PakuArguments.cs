@@ -22,6 +22,20 @@ namespace Paku.Models
         public string Directory { get; set; }
 
         /// <summary>
+        /// ## LoggingEnabled
+        /// 
+        /// True if logging is enabled.
+        /// </summary>
+        public bool LoggingEnabled { get; set; }
+
+        /// <summary>
+        /// ## ShowHelp
+        /// 
+        /// True if the help menu should be shown.
+        /// </summary>
+        public bool ShowHelp { get; set; }
+
+        /// <summary>
         /// ## SelectionStrategy
         /// 
         /// The selection strategy and arguments provided through the --select option.
@@ -96,10 +110,16 @@ namespace Paku.Models
                 Directory = opt;
             });
 
+            // optional logging
+            options.Add("l|log", "Enable logging to a log file(s). Log files are created in a /logs subdirectory under the cleaned folder.", (string opt) =>
+            {
+                LoggingEnabled = true;
+            });
+
             // add a help option
             options.Add("h|help|?", "Show this help menu.", (string opt) =>
             {
-                options.WriteOptionDescriptions(Console.Out);
+                ShowHelp = true;
             });
 
             return options;
@@ -114,7 +134,7 @@ namespace Paku.Models
             {
                 options.Parse(args);
 
-                if (SelectionStrategy == null || FilterStrategy == null || PakuStrategy == null)
+                if (!ShowHelp && (SelectionStrategy == null || FilterStrategy == null || PakuStrategy == null))
                 {
                     throw new ArgumentException("The --select, --filter, and --paku options are required.");
                 }
@@ -124,8 +144,12 @@ namespace Paku.Models
                 // invalid option command provided or required options are missing
                 // show error message and render help
                 Console.WriteLine(ex.Message);
-                options.WriteOptionDescriptions(Console.Out);
+                ShowHelp = true;
+            }
 
+            if (ShowHelp)
+            {
+                options.WriteOptionDescriptions(Console.Out);
                 success = false;
             }
 
@@ -185,7 +209,7 @@ namespace Paku.Models
             }
 
             // add the option:
-            // f|foo=:
+            // f|foo:
             // The foo strategy to use...
             // delegate to call
             options.Add($"{option[0]}|{option}:", buffer.ToString(), action);

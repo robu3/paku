@@ -97,7 +97,7 @@ namespace Paku.Tests
         public void ZipPakuStrategyTest()
         {
             // create some files
-            DirectoryInfo dir = new DirectoryInfo(@"C:\foo");
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
 
             List<FileInfo> files = new List<FileInfo>();
             files.Add(CreateTestFile("ZipPakuStrategyTest1.txt", "test1"));
@@ -136,7 +136,7 @@ namespace Paku.Tests
         public void ZipPakuStrategyTestError()
         {
             // create some files
-            DirectoryInfo dir = new DirectoryInfo(@"C:\foo");
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
 
             List<FileInfo> files = new List<FileInfo>();
             files.Add(CreateTestFile("ZipPakuStrategyTest1.txt", "test1"));

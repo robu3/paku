@@ -14,7 +14,7 @@ namespace Paku.Models
         /// <summary>
         /// ## Success
         /// 
-        /// True if the operation was successful.
+        /// True if the operation was successful (no errors encountered).
         /// </summary>
         public bool Success
         {

@@ -4,6 +4,9 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Linq;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace Paku.Models
 {
@@ -37,6 +40,13 @@ namespace Paku.Models
         public IPakuStrategy PakuStrategy { get; set; }
 
         /// <summary>
+        /// ## Logger
+        /// 
+        /// Used to log activity.
+        /// </summary>
+        public Logger Logger { get; private set; }
+
+        /// <summary>
         /// ## Execute
         /// 
         /// Executes the pipeline on a directory with the specified parameters.
@@ -45,14 +55,60 @@ namespace Paku.Models
         /// <param name="selectParams"></param>
         /// <param name="filterParams"></param>
         /// <returns></returns>
-        public PakuResult Execute(string directory, string selectParams, string filterParams)
+        public PakuResult Execute(string directory, string selectParams, string filterParams, bool logToFile = false)
         {
+            PakuResult result = new PakuResult();
+
+            // check if directory exists first
             DirectoryInfo di = new DirectoryInfo(directory);
 
-            IList<VirtualFileInfo> files = SelectionStrategy.Select(di, selectParams);
-            files = FilterStrategy.Filter(files, filterParams);
+            if (!di.Exists)
+            {
+                // if not, throw an argument exception
+                // we do not want to create a logger in this case, as it will create the directory structure for the log file
+                result.Error = new ArgumentException($"Directory does not exist: {directory}");
+            }
+            else
+            {
+                // setup the logger
+                BootstrapLogger(logToFile, directory);
 
-            return PakuStrategy.Eat(di, files, null);
+                try
+                {
+                    Logger.Info($"Cleaning directory: {directory}");
+
+                    IList<VirtualFileInfo> files = SelectionStrategy.Select(di, selectParams);
+                    Logger.Info($"Files selected: {files.Count}");
+
+                    files = FilterStrategy.Filter(files, filterParams);
+                    Logger.Info($"Files filtered: {files.Count}");
+
+                    result = PakuStrategy.Eat(di, files, null);
+                    Logger.Info($"Files removed: {result.RemovedFiles.Count}");
+
+                    foreach (VirtualFileInfo fi in result.RemovedFiles)
+                    {
+                        Logger.Debug($"Removed: {fi.Name}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Error = ex;
+                }
+
+                if (!result.Success)
+                {
+                    Logger.Error(result.Error);
+                }
+            }
+
+            // write any errors to the console
+            if (!result.Success)
+            {
+                Console.WriteLine(result.Error.Message);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -139,14 +195,46 @@ namespace Paku.Models
             return selectionStrategy;
         }
 
-        public Pipeline(string selection, string filter, string paku)
+        /// <summary>
+        /// ## BootstrapLogger
+        /// 
+        /// Sets up the logger to log pipeline execution.
+        /// </summary>
+        /// <param name="logToFile"></param>
+        /// <param name="directory"></param>
+        private void BootstrapLogger(bool logToFile, string directory)
+        {
+            LoggingConfiguration config = new LoggingConfiguration();
+
+            if (logToFile)
+            {
+                FileTarget fileTarget = new FileTarget("file")
+                {
+                    FileName = Path.Combine(directory, "logs", "paku.log"),
+                    ArchiveEvery = FileArchivePeriod.Day,
+                    ArchiveNumbering = ArchiveNumberingMode.Date,
+                    ArchiveDateFormat = "yyyyMMdd"
+                };
+                config.AddRuleForAllLevels(fileTarget);
+            }
+            else
+            {
+                config.AddTarget(new NullTarget("null"));
+                config.AddRuleForAllLevels("null");
+            }
+
+            LogManager.Configuration = config;
+            this.Logger = LogManager.GetLogger("Paku");
+        }
+
+        public Pipeline(string selection, string filter, string paku, bool loggingEnabled = false)
         {
             this.SelectionStrategy = GetStrategyFromString<ISelectionStrategy>(selection);
             this.FilterStrategy = GetStrategyFromString<IFilterStrategy>(filter);
             this.PakuStrategy = GetStrategyFromString<IPakuStrategy>(paku);
         }
 
-        public Pipeline(ISelectionStrategy selection, IFilterStrategy filter, IPakuStrategy paku)
+        public Pipeline(ISelectionStrategy selection, IFilterStrategy filter, IPakuStrategy paku, bool loggingEnabled = false)
         {
             this.SelectionStrategy = selection;
             this.FilterStrategy = filter;
