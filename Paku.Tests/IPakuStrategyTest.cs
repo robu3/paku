@@ -106,7 +106,7 @@ namespace Paku.Tests
             List<VirtualFileInfo> virtualFiles = files.Select(x => new VirtualFileInfo(x)).ToList();
 
             IPakuStrategy strategy = new ZipPakuStrategy();
-            PakuResult result = strategy.Eat(dir, virtualFiles, null);
+            PakuResult result = strategy.Eat(dir, virtualFiles, "foo");
 
             // all of the files should have been deleted successfully
             Assert.IsTrue(result.Success);
@@ -116,6 +116,7 @@ namespace Paku.Tests
             Assert.AreEqual(1, result.CreatedFiles.Count);
             FileInfo zipFile = result.CreatedFiles[0].ToFileInfo();
             Assert.IsTrue(zipFile.Exists);
+            Assert.AreEqual("foo", zipFile.Name.Substring(0, 3));
 
             // verify that zip file contains all removed files
             using (ZipArchive archive = ZipFile.Open(zipFile.FullName, ZipArchiveMode.Read))
@@ -161,6 +162,36 @@ namespace Paku.Tests
 
             // clean up
             zipFile.Delete();
+        }
+
+        [TestMethod]
+        public void PgpPakuStrategyTest()
+        {
+            // create some files
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            List<FileInfo> files = new List<FileInfo>();
+            files.Add(CreateTestFile("PgpPakuStrategyTest1.txt", "test1"));
+            files.Add(CreateTestFile("PgpPakuStrategyTest2.txt", "test2"));
+
+            List<VirtualFileInfo> virtualFiles = files.Select(x => new VirtualFileInfo(x)).ToList();
+
+            IPakuStrategy strategy = new PgpPakuStrategy();
+            PakuResult result = strategy.Eat(dir, virtualFiles, @"Props\UnitTestPublicKey.asc|foo");
+
+            // all of the files should have been deleted successfully
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(virtualFiles.Count, result.RemovedFiles.Count);
+
+            foreach (VirtualFileInfo vfi in virtualFiles)
+            {
+                FileInfo fi = vfi.ToFileInfo();
+                Assert.IsFalse(fi.Exists);
+            }
+
+            // and one file should have been created
+            Assert.AreEqual(1, result.CreatedFiles.Count);
+            Assert.AreEqual("foo", result.CreatedFiles[0].Name.Substring(0, 3));
         }
     }
 }

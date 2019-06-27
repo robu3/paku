@@ -59,7 +59,7 @@ namespace Paku.Tests
 
             // execute pipeline
             Pipeline pipeline = new Pipeline("RegexSelectionStrategy", "AgeFilterStrategy", "DeletePakuStrategy");
-            pipeline.Execute(dir.FullName, "katsu.txt$", "cdate < 1m");
+            pipeline.Execute(dir.FullName, "katsu.txt$", "cdate < 1m", "");
 
             // confirm that files were deleted
             FileInfo[] files = dir.GetFiles();

@@ -72,5 +72,53 @@ namespace Paku.Tests
             results = filter.Filter(files, "mdate <= 3d");
             Assert.AreEqual(0, results.Count);
         }
+
+        [TestMethod]
+        public void AllFilterStrategyTest()
+        {
+            List<VirtualFileInfo> files = new List<VirtualFileInfo>()
+            {
+                new VirtualFileInfo(@"C:\foo\bar.txt") { CreationTime = DateTime.Now, LastWriteTime = DateTime.Now },
+                new VirtualFileInfo(@"C:\foo\baz.txt") { CreationTime = DateTime.Now.AddDays(-1), LastWriteTime = DateTime.Now },
+                new VirtualFileInfo(@"C:\foo\buz.txt") { CreationTime = DateTime.Now.AddHours(-12).AddMilliseconds(-1), LastWriteTime = DateTime.Now }
+            };
+
+            AllFilterStrategy filter = new AllFilterStrategy();
+            IList<VirtualFileInfo> results = filter.Filter(files, "");
+
+            // all files should be returned
+            Assert.AreEqual(files.Count, results.Count);
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                Assert.AreEqual(files[i], results[i]);
+            }
+        }
+
+        [TestMethod]
+        public void CapFilterStrategyTest()
+        {
+            List<VirtualFileInfo> files = new List<VirtualFileInfo>()
+            {
+                new VirtualFileInfo(@"C:\foo\abc.txt") { CreationTime = DateTime.Now, LastWriteTime = DateTime.Now },
+                new VirtualFileInfo(@"C:\foo\bar.txt") { CreationTime = DateTime.Now.AddMinutes(-1), LastWriteTime = DateTime.Now },
+                new VirtualFileInfo(@"C:\foo\baz.txt") { CreationTime = DateTime.Now.AddDays(-1), LastWriteTime = DateTime.Now },
+                new VirtualFileInfo(@"C:\foo\buz.txt") { CreationTime = DateTime.Now.AddHours(-12).AddMilliseconds(-1), LastWriteTime = DateTime.Now }
+            };
+
+            CapFilterStategy filter = new CapFilterStategy();
+            IList<VirtualFileInfo> results = filter.Filter(files, "2 name desc");
+
+            // files should be sorted in reversed name order
+            // returning the first two files by alpha sort
+            Assert.AreEqual(2, results.Count);
+            Assert.AreEqual(files[1], results[0]);
+            Assert.AreEqual(files[0], results[1]);
+
+            // repeat with file dates
+            results = filter.Filter(files, "1 cdate");
+            Assert.AreEqual(3, results.Count);
+            Assert.AreEqual(files[3], results[0]);
+        }
     }
 }

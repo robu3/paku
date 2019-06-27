@@ -55,7 +55,7 @@ namespace Paku.Models
         /// <param name="selectParams"></param>
         /// <param name="filterParams"></param>
         /// <returns></returns>
-        public PakuResult Execute(string directory, string selectParams, string filterParams, bool logToFile = false)
+        public PakuResult Execute(string directory, string selectParams, string filterParams, string pakuParams, bool logToFile = false)
         {
             PakuResult result = new PakuResult();
 
@@ -83,7 +83,7 @@ namespace Paku.Models
                     files = FilterStrategy.Filter(files, filterParams);
                     Logger.Info($"Files filtered: {files.Count}");
 
-                    result = PakuStrategy.Eat(di, files, null);
+                    result = PakuStrategy.Eat(di, files, pakuParams);
                     Logger.Info($"Files removed: {result.RemovedFiles.Count}");
 
                     foreach (VirtualFileInfo fi in result.RemovedFiles)

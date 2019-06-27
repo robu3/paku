@@ -13,7 +13,7 @@ namespace Paku.Models
     /// Eats files by adding them to a zip archive and then deleting them.
     /// </summary>
     [CommandAlias("zip")]
-    [Description("Zips up the file(s) and then deletes them.")]
+    [Description("Zips up the file(s) and then deletes them. An optional file name prefix can be provided (defaults to 'paku').")]
     public class ZipPakuStrategy : IPakuStrategy
     {
         public string ZipFilePrefix { get; set; }
@@ -27,6 +27,11 @@ namespace Paku.Models
         /// <returns></returns>
         public PakuResult Eat(DirectoryInfo dir, IList<VirtualFileInfo> files, string parameters)
         {
+            if (!String.IsNullOrEmpty(parameters))
+            {
+                ZipFilePrefix = parameters;
+            }
+
             // attempt to delete the files, tracking which ones we could delete
             PakuResult result = new PakuResult();
             string zipName = Path.Combine(dir.FullName, $"{ZipFilePrefix}_{DateTime.Now.ToString("yyyyMMdd_HH-mm-ss-fff")}.zip");
@@ -72,11 +77,6 @@ namespace Paku.Models
             result.CreatedFiles.Add(new VirtualFileInfo(new FileInfo(zipName)));
 
             return result;
-        }
-
-        public ZipPakuStrategy(string zipPrefix)
-        {
-            this.ZipFilePrefix = zipPrefix;
         }
 
         public ZipPakuStrategy()

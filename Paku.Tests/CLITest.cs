@@ -23,7 +23,7 @@ namespace Paku.Tests
 
             // attempt to parse arguments and ensure that options were set correctly
             args = new PakuArguments();
-            bool success = args.Parse(new string[] { @"--dir=C:\foo", "--select:regex=foo", "--filter:age=cdate>30m", "--paku:delete", "--log" });
+            bool success = args.Parse(new string[] { @"--dir=C:\foo", "--select:regex=foo", "--filter:age=cdate>30m", "--paku:delete=bar", "--log" });
 
             Assert.IsTrue(success);
             Assert.IsNotNull(args.Directory);

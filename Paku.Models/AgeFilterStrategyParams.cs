@@ -13,15 +13,15 @@ namespace Paku.Models
     public class AgeFilterStrategyParams
     {
         // should match: "cdate>8h" or "mdate <= 30m"
-        public static readonly Regex ParametersRegex = new Regex(@"^(cdate|mdate)\s?([><=]=*)\s?(\d+)([smhd])$");
+        internal static readonly Regex ParametersRegex = new Regex(@"^(cdate|mdate)\s?([><=]=*)\s?(\d+)([smhd])$");
 
-        public static readonly Dictionary<string, FileDateProperties> FileDatesMap = new Dictionary<string, FileDateProperties>()
+        internal static readonly Dictionary<string, FileDateProperties> FileDatesMap = new Dictionary<string, FileDateProperties>()
         {
             { "cdate", FileDateProperties.CreateDate },
             { "mdate", FileDateProperties.ModifiedDate }
         };
 
-        public static readonly Dictionary<string, Operators> OperatorsMap = new Dictionary<string, Operators>()
+        internal static readonly Dictionary<string, Operators> OperatorsMap = new Dictionary<string, Operators>()
         {
             { ">", Operators.GreaterThan },
             { ">=", Operators.GreaterThanEquals },
@@ -30,7 +30,7 @@ namespace Paku.Models
             { "=", Operators.Equals }
         };
 
-        public static readonly Dictionary<string, TimeUnits> TimeUnitsMap = new Dictionary<string, TimeUnits>()
+        internal static readonly Dictionary<string, TimeUnits> TimeUnitsMap = new Dictionary<string, TimeUnits>()
         {
             { "s", TimeUnits.Second },
             { "m", TimeUnits.Minute },
