@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Props\azure.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Props\bar.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

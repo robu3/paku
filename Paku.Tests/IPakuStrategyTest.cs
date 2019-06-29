@@ -6,6 +6,8 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.IO.Compression;
+using Newtonsoft.Json;
+using Paku.Models.Config;
 
 namespace Paku.Tests
 {
@@ -192,6 +194,39 @@ namespace Paku.Tests
             // and one file should have been created
             Assert.AreEqual(1, result.CreatedFiles.Count);
             Assert.AreEqual("foo", result.CreatedFiles[0].Name.Substring(0, 3));
+        }
+
+        [TestMethod]
+        public void AzureBlobPakuStrategyUploadTest()
+        {
+            AzureBlobPakuStrategy strategy = new AzureBlobPakuStrategy();
+            AzurePakuConfig config = JsonConvert.DeserializeObject<AzurePakuConfig>(File.ReadAllText(@"Props\azure.json"));
+
+            File.WriteAllText("AzureBlobTest.txt", "test file");
+            VirtualFileInfo fi = new VirtualFileInfo(new FileInfo("AzureBlobTest.txt"));
+            List<VirtualFileInfo> files = new List<VirtualFileInfo>() { fi };
+
+            strategy.Upload(config.ConnectionString, config.Container, files);
+        }
+
+        [TestMethod]
+        public void AzureBlobPakuStrategyTest()
+        {
+            // create test files
+            List<VirtualFileInfo> files = new List<VirtualFileInfo>();
+            for (int i = 0; i < 3; i++)
+            {
+                string fname = $"AzureBlobTest_{i}.txt";
+                File.WriteAllText(fname, $"test file {i}");
+                VirtualFileInfo fi = new VirtualFileInfo(new FileInfo(fname));
+                files.Add(fi);
+            }
+
+            AzureBlobPakuStrategy strategy = new AzureBlobPakuStrategy();
+            PakuResult result = strategy.Eat(new DirectoryInfo(Directory.GetCurrentDirectory()), files, @"Props\azure.json");
+
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(3, result.RemovedFiles.Count);
         }
     }
 }

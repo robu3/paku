@@ -347,3 +347,9 @@ MigrationBackup/
 
 # private PGP key
 Paku.Tests/Props/UnitTestPrivateKey.asc
+
+# azure storage account connection string
+Paku.Tests/Props/azure.json
+
+# vim swap files
+*.swp
